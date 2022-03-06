@@ -12,13 +12,17 @@ const InputListener = () => {
 		browserSupportsSpeechRecognition,
 	} = useSpeechRecognition();
 
-	const [editorBody, setBody] = useState('>> Start of Transcript');
+	// Hook for Editor Body
+	const [editorBody, setBody] = useState('>> START \n');
+	// Hook for copied button
+	const [isCopyActive, setCopyActive] = useState(false);
 
 	if (!browserSupportsSpeechRecognition) {
 		return <span>Browser doesn't support speech recognition.</span>;
 	}
 
 	function handleAddToTranscript({ transcript }) {
+		setCopyActive(false);
 		editorBody === ''
 			? setBody(`> ${transcript}.`)
 			: setBody(`${editorBody} 
@@ -27,9 +31,10 @@ const InputListener = () => {
 	}
 
 	function handleStopListening() {
+		setCopyActive(false);
 		setBody(`${editorBody}
 
->> End of Transcript
+>> END
 --------------------------------`);
 	}
 
@@ -37,18 +42,30 @@ const InputListener = () => {
 		setBody('');
 	}
 
+	function handleCopyEditor(e) {
+		setCopyActive(!isCopyActive);
+		navigator.clipboard.writeText(editorBody);
+	}
+
 	function handleChange(e) {
 		setBody(e.target.value);
 	}
 
+	// ! RETURNED COMPONENT
 	return (
-		<div className="text-center">
-			<p className="display-5">Microphone: {listening ? 'on' : 'off'}</p>
+		<div className="container">
+			<p className="display-5 text-center">
+				Microphone: {listening ? 'on' : 'off'}
+			</p>
 
-			<div className="controls">
+			<div className="text-center">
 				{/* Start listening to Microphone */}
 				<button
-					className="btn btn-success m-2"
+					className={
+						listening
+							? 'btn btn-lg btn-secondary m-2 disabled'
+							: 'btn btn-lg btn-success m-2'
+					}
 					onClick={() =>
 						SpeechRecognition.startListening({ continuous: true })
 					}
@@ -58,7 +75,7 @@ const InputListener = () => {
 
 				{/* Add transcript to textarea value, clear transcript */}
 				<button
-					className="btn btn-success m-2"
+					className="btn btn-lg btn-success m-2"
 					onClick={() => {
 						resetTranscript();
 						handleAddToTranscript({ transcript });
@@ -69,7 +86,7 @@ const InputListener = () => {
 
 				{/* Stop Listening to Microphone */}
 				<button
-					className="btn btn-danger m-2"
+					className="btn btn-lg btn-danger m-2"
 					onClick={() => {
 						SpeechRecognition.stopListening();
 						handleStopListening();
@@ -80,27 +97,59 @@ const InputListener = () => {
 			</div>
 
 			{/* output of microphone */}
-			<p>{transcript}</p>
+			<div className="w-75 mx-auto">
+				<h4>Transcription:</h4>
+				<div className="input-group input-group-lg mt-3">
+					<div
+						className="form-control mx-auto"
+						placeholder="Transcription..."
+					>
+						{transcript || (
+							<p className="text-muted">
+								Text will appear here...
+							</p>
+						)}{' '}
+					</div>
+					<button
+						className="input-group-text"
+						onClick={resetTranscript}
+					>
+						CLEAR
+					</button>
+				</div>
+			</div>
 
 			{/* editor */}
-			<div>
+			<div className="mt-5 w-75 mx-auto">
+				<h3>Editor:</h3>
 				<textarea
 					name="transcript-editor"
 					id="transcript-editor"
-					className="px-3 py-2"
-					cols="30"
+					className="form-control"
 					rows="10"
 					value={editorBody}
 					onChange={handleChange}
 				></textarea>
-			</div>
+				<button
+					className={
+						isCopyActive
+							? 'btn btn-success mt-4 me-2'
+							: 'btn btn-secondary mt-4 me-2'
+					}
+					onClick={() => {
+						handleCopyEditor();
+					}}
+				>
+					{isCopyActive ? 'Copied!' : 'Copy'}
+				</button>
 
-			<button
-				className="btn btn-secondary m-2"
-				onClick={handleClearEditor}
-			>
-				Clear
-			</button>
+				<button
+					className="btn btn-secondary mt-4 me-2"
+					onClick={handleClearEditor}
+				>
+					Clear
+				</button>
+			</div>
 		</div>
 	);
 };
