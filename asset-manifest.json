@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/pal-scriber/static/css/main.e6c13ad2.css",
+    "main.js": "/pal-scriber/static/js/main.81481205.js",
+    "static/js/787.c6d67745.chunk.js": "/pal-scriber/static/js/787.c6d67745.chunk.js",
+    "index.html": "/pal-scriber/index.html",
+    "main.e6c13ad2.css.map": "/pal-scriber/static/css/main.e6c13ad2.css.map",
+    "main.81481205.js.map": "/pal-scriber/static/js/main.81481205.js.map",
+    "787.c6d67745.chunk.js.map": "/pal-scriber/static/js/787.c6d67745.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.81481205.js"
+  ]
+}
