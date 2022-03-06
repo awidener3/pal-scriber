@@ -63,7 +63,7 @@ const InputListener = () => {
 				<button
 					className={
 						listening
-							? 'btn btn-lg btn-secondary m-2 disabled'
+							? 'btn btn-lg btn-success m-2 disabled'
 							: 'btn btn-lg btn-success m-2'
 					}
 					onClick={() =>
@@ -75,7 +75,11 @@ const InputListener = () => {
 
 				{/* Add transcript to textarea value, clear transcript */}
 				<button
-					className="btn btn-lg btn-success m-2"
+					className={
+						transcript.length > 0
+							? 'btn btn-lg btn-success m-2'
+							: 'btn btn-lg btn-success m-2 disabled'
+					}
 					onClick={() => {
 						resetTranscript();
 						handleAddToTranscript({ transcript });
