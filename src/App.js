@@ -1,10 +1,10 @@
 import './App.css';
-import Dictaphone from './Dictaphone';
+import InputListener from './InputListener';
 
 function App() {
 	return (
 		<div className="App d-flex justify-content-center align-items-center vh-100">
-			<Dictaphone />
+			<InputListener />
 		</div>
 	);
 }
