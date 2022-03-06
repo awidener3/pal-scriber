@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SpeechRecognition, {
 	useSpeechRecognition,
 } from 'react-speech-recognition';
+import { MicFill, MicMuteFill } from 'react-bootstrap-icons';
 
 // Example from docs
 const InputListener = () => {
@@ -12,48 +13,65 @@ const InputListener = () => {
 		browserSupportsSpeechRecognition,
 	} = useSpeechRecognition();
 
-	// Hook for Editor Body
-	const [editorBody, setBody] = useState('>> START \n');
-	// Hook for copied button
+	// Hooks
+	const [editorBody, setBody] = useState('ENTER TITLE OF TRANSCRIPTION HERE');
 	const [isCopyActive, setCopyActive] = useState(false);
 
+	// Checks browser for capability
 	if (!browserSupportsSpeechRecognition) {
 		return <span>Browser doesn't support speech recognition.</span>;
 	}
 
-	function handleAddToTranscript({ transcript }) {
+	// Controls methods
+	const handleStartListening = () => {
+		setCopyActive(false);
+		setBody(editorBody + '\n>> START \n');
+	};
+
+	const handleAddToTranscript = ({ transcript }) => {
 		setCopyActive(false);
 		editorBody === ''
 			? setBody(`> ${transcript}.`)
 			: setBody(`${editorBody} 
 > ${transcript}.`);
 		transcript = '';
-	}
+	};
 
-	function handleStopListening() {
+	const handleStopListening = () => {
 		setCopyActive(false);
 		setBody(`${editorBody}
 
 >> END
 --------------------------------`);
-	}
+	};
 
-	function handleClearEditor() {
+	// Editor methods
+	const handleChange = (e) => {
+		setCopyActive(false);
+		setBody(e.target.value);
+	};
+
+	const handleClearEditor = () => {
+		setCopyActive(false);
 		setBody('');
-	}
+	};
 
-	function handleCopyEditor(e) {
+	const handleCopyEditor = (e) => {
 		setCopyActive(!isCopyActive);
 		navigator.clipboard.writeText(editorBody);
-	}
+	};
 
-	function handleChange(e) {
-		setBody(e.target.value);
-	}
-
-	// ! RETURNED COMPONENT
+	// Component
 	return (
 		<div className="container">
+			<p className="text-center">
+				{listening ? (
+					<MicFill size={96} color="#188754" />
+				) : (
+					<MicMuteFill size={96} color="#dc3546" />
+				)}
+			</p>
+
 			<p className="display-5 text-center">
 				Microphone: {listening ? 'on' : 'off'}
 			</p>
@@ -66,9 +84,10 @@ const InputListener = () => {
 							? 'btn btn-lg btn-success m-2 disabled'
 							: 'btn btn-lg btn-success m-2'
 					}
-					onClick={() =>
-						SpeechRecognition.startListening({ continuous: true })
-					}
+					onClick={() => {
+						handleStartListening();
+						SpeechRecognition.startListening({ continuous: true });
+					}}
 				>
 					Start
 				</button>
