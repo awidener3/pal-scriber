@@ -12,14 +12,29 @@ const InputListener = () => {
 		browserSupportsSpeechRecognition,
 	} = useSpeechRecognition();
 
-	const [editorBody, setBody] = useState('');
+	const [editorBody, setBody] = useState('>> Start of Transcript');
 
 	if (!browserSupportsSpeechRecognition) {
 		return <span>Browser doesn't support speech recognition.</span>;
 	}
 
-	function handleStopListen({ transcript }) {
-		setBody(`${editorBody} ${transcript}`);
+	function handleAddToTranscript({ transcript }) {
+		editorBody === ''
+			? setBody(`> ${transcript}.`)
+			: setBody(`${editorBody} 
+> ${transcript}.`);
+		transcript = '';
+	}
+
+	function handleStopListening() {
+		setBody(`${editorBody}
+
+>> End of Transcript
+--------------------------------`);
+	}
+
+	function handleClearEditor() {
+		setBody('');
 	}
 
 	function handleChange(e) {
@@ -30,38 +45,62 @@ const InputListener = () => {
 		<div className="text-center">
 			<p className="display-5">Microphone: {listening ? 'on' : 'off'}</p>
 
-			{/* start listening, continuously */}
-			<button
-				className="btn btn-success m-2"
-				onClick={() =>
-					SpeechRecognition.startListening({ continuous: true })
-				}
-			>
-				Start
-			</button>
+			<div className="controls">
+				{/* Start listening to Microphone */}
+				<button
+					className="btn btn-success m-2"
+					onClick={() =>
+						SpeechRecognition.startListening({ continuous: true })
+					}
+				>
+					Start
+				</button>
 
-			{/* stop listening */}
-			<button
-				className="btn btn-danger m-2"
-				onClick={() => {
-					SpeechRecognition.stopListening();
-					// resetTranscript();
-					handleStopListen({ transcript });
-				}}
-			>
-				Stop
-			</button>
+				{/* Add transcript to textarea value, clear transcript */}
+				<button
+					className="btn btn-success m-2"
+					onClick={() => {
+						resetTranscript();
+						handleAddToTranscript({ transcript });
+					}}
+				>
+					Add
+				</button>
+
+				{/* Stop Listening to Microphone */}
+				<button
+					className="btn btn-danger m-2"
+					onClick={() => {
+						SpeechRecognition.stopListening();
+						handleStopListening();
+					}}
+				>
+					Stop
+				</button>
+			</div>
 
 			{/* output of microphone */}
 			<p>{transcript}</p>
-			<textarea
-				name="transcript-editor"
-				id="transcript-editor"
-				cols="30"
-				rows="10"
-				value={editorBody}
-				onChange={handleChange}
-			></textarea>
+
+			{/* editor */}
+			<div>
+				<textarea
+					name="transcript-editor"
+					id="transcript-editor"
+					className="px-3 py-2"
+					cols="30"
+					rows="10"
+					value={editorBody}
+					onChange={handleChange}
+				></textarea>
+			</div>
+
+			<button
+				className="btn btn-secondary m-2"
+				onClick={handleClearEditor}
+			>
+				Clear
+			</button>
 		</div>
 	);
 };
