@@ -4,7 +4,6 @@ import SpeechRecognition, {
 } from 'react-speech-recognition';
 import { MicFill, MicMuteFill } from 'react-bootstrap-icons';
 
-// Example from docs
 const InputListener = () => {
 	const {
 		transcript,
@@ -23,11 +22,13 @@ const InputListener = () => {
 	}
 
 	// Controls methods
+	// Handles initializing input source
 	const handleStartListening = () => {
 		setCopyActive(false);
 		setBody(editorBody + '\n>> START \n');
 	};
 
+	// Handles adding current transcription text to textarea
 	const handleAddToTranscript = ({ transcript }) => {
 		setCopyActive(false);
 		editorBody === ''
@@ -37,6 +38,7 @@ const InputListener = () => {
 		transcript = '';
 	};
 
+	// Handles disabling input source
 	const handleStopListening = () => {
 		setCopyActive(false);
 		setBody(`${editorBody}
@@ -46,30 +48,38 @@ const InputListener = () => {
 	};
 
 	// Editor methods
+	// Handles change on the textarea contents
 	const handleChange = (e) => {
 		setCopyActive(false);
 		setBody(e.target.value);
 	};
 
+	// Handles the clear button
 	const handleClearEditor = () => {
 		setCopyActive(false);
 		setBody('');
 	};
 
+	// Handles the copy button
 	const handleCopyEditor = (e) => {
 		setCopyActive(!isCopyActive);
 		navigator.clipboard.writeText(editorBody);
 	};
 
+	// Function that saves text area content as a text/plain file
 	const saveAsText = (filename, content) => {
+		// Creates a blob to send into the text file
 		const blob = new Blob([content], { type: 'text/plain' });
 
+		// Prepares the download link
 		const downloadLink = document.createElement('a');
 		downloadLink.download = filename;
 		downloadLink.innerHtml = 'Download File';
 
+		// Doesn't render the link on page if browser allows it
 		if (window.webkitURL != null) {
 			downloadLink.href = window.webkitURL.createObjectURL(blob);
+			// Displays link if needed
 		} else {
 			downloadLink.href = window.URL.createObjectURL(blob);
 			downloadLink.onclick = destroyClickedLink;
@@ -80,6 +90,7 @@ const InputListener = () => {
 		downloadLink.click();
 	};
 
+	// Removes link created from saveAsText()
 	const destroyClickedLink = (e) => {
 		document.body.removeChild(e.target);
 	};
@@ -87,6 +98,7 @@ const InputListener = () => {
 	// Component
 	return (
 		<div className="container">
+			{/* Visual representations of microphone state */}
 			<p className="text-center">
 				{listening ? (
 					<MicFill size={96} color="#188754" />
@@ -142,7 +154,7 @@ const InputListener = () => {
 				</button>
 			</div>
 
-			{/* output of microphone */}
+			{/* Output of microphone */}
 			<div className="w-75 mx-auto">
 				<h4>Transcription:</h4>
 				<div className="input-group input-group-lg mt-3">
@@ -165,9 +177,11 @@ const InputListener = () => {
 				</div>
 			</div>
 
-			{/* editor */}
+			{/* Text editor */}
 			<div className="mt-5 w-75 mx-auto">
 				<h3>Editor:</h3>
+
+				{/* Filename declaration */}
 				<label htmlFor="transcript-filename" className="form-label">
 					Enter your filename:
 				</label>
@@ -178,6 +192,7 @@ const InputListener = () => {
 					placeholder="transcript.txt"
 				></input>
 
+				{/* Transcription preview and editor */}
 				<label htmlFor="transcript-editor" className="form-label">
 					Edit transcription:
 				</label>
@@ -191,7 +206,7 @@ const InputListener = () => {
 					placeholder="Text will appear here"
 				></textarea>
 
-				{/* button to save textarea contents as a .txt file */}
+				{/* Button to save textarea contents as a .txt file */}
 				<button
 					className="btn btn-primary mt-4 me-2"
 					onClick={() => {
@@ -209,7 +224,7 @@ const InputListener = () => {
 					Save as Text File
 				</button>
 
-				{/* button to copy text area contents to clipboard */}
+				{/* Button to copy text area contents to clipboard */}
 				<button
 					className={
 						isCopyActive
@@ -223,7 +238,7 @@ const InputListener = () => {
 					{isCopyActive ? 'Copied!' : 'Copy'}
 				</button>
 
-				{/* button to clear text area contents */}
+				{/* Button to clear text area contents */}
 				<button
 					className="btn btn-secondary mt-4 me-2"
 					onClick={handleClearEditor}
