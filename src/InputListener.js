@@ -14,7 +14,7 @@ const InputListener = () => {
 	} = useSpeechRecognition();
 
 	// Hooks
-	const [editorBody, setBody] = useState('ENTER TITLE OF TRANSCRIPTION HERE');
+	const [editorBody, setBody] = useState('');
 	const [isCopyActive, setCopyActive] = useState(false);
 
 	// Checks browser for capability
@@ -59,6 +59,29 @@ const InputListener = () => {
 	const handleCopyEditor = (e) => {
 		setCopyActive(!isCopyActive);
 		navigator.clipboard.writeText(editorBody);
+	};
+
+	const saveAsText = (filename, content) => {
+		const blob = new Blob([content], { type: 'text/plain' });
+
+		const downloadLink = document.createElement('a');
+		downloadLink.download = filename;
+		downloadLink.innerHtml = 'Download File';
+
+		if (window.webkitURL != null) {
+			downloadLink.href = window.webkitURL.createObjectURL(blob);
+		} else {
+			downloadLink.href = window.URL.createObjectURL(blob);
+			downloadLink.onclick = destroyClickedLink;
+			downloadLink.style.display = 'none';
+			document.body.appendChild(downloadLink);
+		}
+
+		downloadLink.click();
+	};
+
+	const destroyClickedLink = (e) => {
+		document.body.removeChild(e.target);
 	};
 
 	// Component
@@ -145,6 +168,19 @@ const InputListener = () => {
 			{/* editor */}
 			<div className="mt-5 w-75 mx-auto">
 				<h3>Editor:</h3>
+				<label htmlFor="transcript-filename" className="form-label">
+					Enter your filename:
+				</label>
+				<input
+					name="transcript-filename"
+					className="form-control mb-2"
+					id="transcript-filename"
+					placeholder="transcript.txt"
+				></input>
+
+				<label htmlFor="transcript-editor" className="form-label">
+					Edit transcription:
+				</label>
 				<textarea
 					name="transcript-editor"
 					id="transcript-editor"
@@ -152,7 +188,28 @@ const InputListener = () => {
 					rows="10"
 					value={editorBody}
 					onChange={handleChange}
+					placeholder="Text will appear here"
 				></textarea>
+
+				{/* button to save textarea contents as a .txt file */}
+				<button
+					className="btn btn-primary mt-4 me-2"
+					onClick={() => {
+						const filename = document.querySelector(
+							'#transcript-filename'
+						);
+						const content =
+							document.querySelector('#transcript-editor');
+						saveAsText(
+							filename.value.split(' ').join('_').toLowerCase(),
+							content.value
+						);
+					}}
+				>
+					Save as Text File
+				</button>
+
+				{/* button to copy text area contents to clipboard */}
 				<button
 					className={
 						isCopyActive
@@ -166,6 +223,7 @@ const InputListener = () => {
 					{isCopyActive ? 'Copied!' : 'Copy'}
 				</button>
 
+				{/* button to clear text area contents */}
 				<button
 					className="btn btn-secondary mt-4 me-2"
 					onClick={handleClearEditor}
