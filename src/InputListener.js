@@ -3,6 +3,8 @@ import SpeechRecognition, {
 	useSpeechRecognition,
 } from 'react-speech-recognition';
 import { MicFill, MicMuteFill } from 'react-bootstrap-icons';
+import IOSelect from './components/IOSelect';
+import InputSelect from './components/InputSelect';
 
 const InputListener = () => {
 	const {
@@ -153,6 +155,9 @@ const InputListener = () => {
 					Stop
 				</button>
 			</div>
+
+			<InputSelect />
+			<IOSelect />
 
 			{/* Output of microphone */}
 			<div className="w-75 mx-auto">

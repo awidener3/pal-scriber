@@ -9,6 +9,7 @@ This application is still in development.
 ## 🌎 Planned Features
 * ~~Listen to user microphone and transcribe to an in-app editor.~~
 * ~~Editor can export file into a text file for the user to download.~~
+* Create "Push-to-talk" functionality using mouse or key state. 
 * The user can change the inputs to allow use of other audio inputs such as mixers and system audio.
 * A playback function is implemented that will read the transcription back to the user.
 * The user can set different speakers in-app that have corresponding buttons. This replaces the current "add" button and instead adds a button for each speaker that inserts their name/id before the added text.
